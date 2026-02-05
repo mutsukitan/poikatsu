@@ -19,10 +19,10 @@ def jibunbank(driver: uc.Chrome, config: dict) -> str:
     login_button = driver.find_element(by=By.LINK_TEXT, value="ログイン")
     login_button.click()
 
-    for i in range(config["jibun_attempts"]):
-        # ログイン完了まで待機（二段階認証などがある可能性）
-        WebDriverWait(driver, 240, 1).until(EC.presence_of_element_located((By.CLASS_NAME, "p-toplogin-money-list")))
+    # ログイン完了まで待機（二段階認証などがある可能性）
+    WebDriverWait(driver, 240, 1).until(EC.presence_of_element_located((By.CLASS_NAME, "p-toplogin-money-list")))
 
+    for i in range(config["jibun_attempts"]):
         # 振込ページへ移動
         driver.execute_script("location.href='/transfer/ap/transfer/transfer/transferstart';")
         time.sleep(5)  # 念の為5秒の待機時間を設ける
