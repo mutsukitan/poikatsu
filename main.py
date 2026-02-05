@@ -1,7 +1,7 @@
-import selenium.common.exceptions
 import yaml
 import os
 import undetected_chromedriver as uc
+import selenium.common.exceptions
 from core.jibunbank import jibunbank
 
 
@@ -24,21 +24,18 @@ def load_config() -> dict:
     except KeyError as e:
         raise ValueError(f"[-] 構成が正しくありません。キーエラーです: {e}")
 
-
 def open_browser() -> uc.Chrome:
     profile_path = os.path.dirname(__file__) + "/chrome_profile"
 
     options = uc.ChromeOptions()
 
     options.user_data_dir = profile_path
-
     options.add_argument("--no-sandbox")
     options.add_argument('--start-maximized')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument("--disable-web-security")
     options.add_argument("--enable-blink-features=TrustedDOMTypes")
     options.add_argument("--disable-features=IsolateOrigins,site-per-process")
-
     try:
         driver = uc.Chrome(
             headless=False,
