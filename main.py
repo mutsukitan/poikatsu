@@ -18,6 +18,10 @@ def load_config() -> dict:
             "jibun_attempts": config_file["jibun_attempts"],
             "jibun_address_order": config_file["jibun_address_order"],
             "jibun_amount": config_file["jibun_amount"],
+            "shinsei_customer_no": config_file["shinsei_customer_no"],
+            "shinsei_password": config_file["shinsei_password"],
+            "shinsei_attempts": config_file["shinsei_attempts"],
+            "shinsei_amount": config_file["shinsei_amount"],
             "chrome_path": config_file["chrome_path"]
         }
         return config
