@@ -9,4 +9,5 @@ jibun_amount: "1"  # 1回あたりの振込金額
 shinsei_customer_no: "1111111111"  # お客様番号
 shinsei_password: "Password"  # パスワード
 shinsei_attempts: 15  # 振込試行回数
+shinsei_address_order: 0  # 0: 登録先1番目 1: 登録先2番目 2: 登録先3番目 ...
 shinsei_amount: "1"  # 1回あたりの振込金額
