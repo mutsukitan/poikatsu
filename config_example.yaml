@@ -1,6 +1,13 @@
+chrome_path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"  # Chromeの実行ファイルパス
+
 jibun_customer_no: "1111111111"  # お客様番号
 jibun_password: "Password"  # パスワード
 jibun_attempts: 15  # 振込試行回数
 jibun_address_order: "001"  # 001: 登録先1番目 002: 登録先2番目 003: 登録先3番目 ...
 jibun_amount: "1"  # 1回あたりの振込金額
-chrome_path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"  # Chromeの実行ファイルパス
+
+shinsei_customer_no: "1111111111"  # お客様番号
+shinsei_password: "Password"  # パスワード
+shinsei_attempts: 15  # 振込試行回数
+shinsei_address_order: 0  # 0: 登録先1番目 1: 登録先2番目 2: 登録先3番目 ...
+shinsei_amount: "1"  # 1回あたりの振込金額

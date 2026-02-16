@@ -50,11 +50,11 @@ def jibunbank(driver: uc.Chrome, config: dict) -> str:
         for i in range(240):
             result = driver.execute_script("return document.getElementsByClassName('c-hdg-level2')[0].innerText")
             if result == "振込受付完了":
-                print("[+] 振り込み受付完了を確認しました。続行します。")
+                print(f"[+] 振り込み受付完了を確認しました。残り振込試行回数は{config['jibun_attempts'] - i - 1}回です。")
                 break
             time.sleep(1)
         else:
-            print("[-] 振り込み受付完了を確認できませんでした。10秒後に続行します。")
+            print(f"[-] 振り込み受付完了を確認できませんでした。残り振込試行回数は{config['jibun_attempts'] - i - 1}回です。10秒後に続行します。")
             time.sleep(10)  # 次の振込まで10秒待機
 
     return "done"

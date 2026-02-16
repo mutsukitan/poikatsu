@@ -3,6 +3,7 @@ import os
 import undetected_chromedriver as uc
 import selenium.common.exceptions
 from core.jibunbank import jibunbank
+from core.shinsei import shinsei
 
 
 def load_config() -> dict:
@@ -13,16 +14,25 @@ def load_config() -> dict:
             raise FileNotFoundError("[-] config.yamlが設置されていません。")
     try:
         config = {
-            "jibun_customer_no": config_file["jibun_customer_no"],
-            "jibun_password": config_file["jibun_password"],
-            "jibun_attempts": config_file["jibun_attempts"],
-            "jibun_address_order": config_file["jibun_address_order"],
-            "jibun_amount": config_file["jibun_amount"],
-            "chrome_path": config_file["chrome_path"]
+            "jibun_customer_no": str(config_file["jibun_customer_no"]),
+            "jibun_password": str(config_file["jibun_password"]),
+            "jibun_attempts": int(config_file["jibun_attempts"]),
+            "jibun_address_order": str(config_file["jibun_address_order"]),
+            "jibun_amount": str(config_file["jibun_amount"]),
+
+            "shinsei_customer_no": str(config_file["shinsei_customer_no"]),
+            "shinsei_password": str(config_file["shinsei_password"]),
+            "shinsei_attempts": int(config_file["shinsei_attempts"]),
+            "shinsei_address_order": int(config_file["shinsei_address_order"]),
+            "shinsei_amount": str(config_file["shinsei_amount"]),
+            
+            "chrome_path": str(config_file["chrome_path"])
         }
         return config
     except KeyError as e:
         raise ValueError(f"[-] 構成が正しくありません。キーエラーです: {e}")
+    except ValueError as e:
+        raise ValueError(f"[-] 構成の値の型が正しくありません。値エラーです: {e}")
 
 def open_browser() -> uc.Chrome:
     profile_path = os.path.dirname(__file__) + "/chrome_profile"
@@ -50,10 +60,7 @@ def open_browser() -> uc.Chrome:
 
     return driver
 
-
-if __name__ == "__main__":
-    config = load_config()
-
+def main_prompt() -> bool:
     info = """
 ==================================================
     ポイ活自動化ツール by Mutsuki
@@ -66,7 +73,7 @@ if __name__ == "__main__":
 ==================================================
 
     1: auじぶん銀行連続振込
-    2: SBI新生銀行連続振込(近日対応予定)
+    2: SBI新生銀行連続振込
     9: このツールについて
     0: exit
 """
@@ -74,21 +81,48 @@ if __name__ == "__main__":
     input_ = input("[?] オプションを選択してください: ")
 
     if input_ == "1":
+        print("[!] auじぶん銀行の連続振込を開始します。振り込み失敗を検知した場合10秒の待機時間があるため、その間に処理をキャンセルできます。")
+        input("[+] Enterを押すと続行します。")
         driver = open_browser()
         result = jibunbank(driver, config)
         if result == "done":
             driver.quit()
-            print("[+] Process completed successfully.")
-            print(info)
+            print("[+] auじぶん銀行連続振込が完了しました。")
+        else:
+            print("[-] auじぶん銀行連続振込が完了しませんでした。")
+        return True
 
     elif input_ == "2":
-        print("[-] 現在SBI新生銀行の自動振込には対応していません。")
+        print("[!] SBI新生銀行の連続振込を開始します。振り込み失敗を検知した場合10秒の待機時間があるため、その間に処理をキャンセルできます。")
+        input("[+] Enterを押すと続行します。")
+        driver = open_browser()
+        result = shinsei(driver, config)
+        if result == "done":
+            driver.quit()
+            print("[+] SBI新生銀行連続振込が完了しました。")
+
+        else:
+            print("[-] SBI新生銀行連続振込が完了しませんでした。")
+        return True
 
     elif input_ == "9":
         about = "このツールはMutsukiによって作成されました。\n" \
         "トップメニューに記載のGithubリポジトリにて公開されています。\n" \
         "バグ報告や機能要望などがありましたら、GithubのIssueまでご連絡ください。"
+        print(about)
+        return True
     
     elif input_ == "0":
-        print("[+] Exiting...")
-        exit(0)
+        print("[!] Exiting...")
+        return False
+    
+    else:
+        print("[-] 無効なオプションです。もう一度選択してください。")
+        return True
+
+
+if __name__ == "__main__":
+    config = load_config()
+
+    while main_prompt():
+        pass
