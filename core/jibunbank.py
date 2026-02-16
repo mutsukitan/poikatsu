@@ -3,6 +3,7 @@ import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from colorama import Fore
 
 
 def jibunbank(driver: uc.Chrome, config: dict) -> str:
@@ -50,11 +51,11 @@ def jibunbank(driver: uc.Chrome, config: dict) -> str:
         for i in range(240):
             result = driver.execute_script("return document.getElementsByClassName('c-hdg-level2')[0].innerText")
             if result == "振込受付完了":
-                print(f"[+] 振り込み受付完了を確認しました。残り振込試行回数は{config['jibun_attempts'] - i - 1}回です。")
+                print(f"{Fore.GREEN}[+]{Fore.RESET} 振り込み受付完了を確認しました。残り振込試行回数は{config['jibun_attempts'] - i - 1}回です。")
                 break
             time.sleep(1)
         else:
-            print(f"[-] 振り込み受付完了を確認できませんでした。残り振込試行回数は{config['jibun_attempts'] - i - 1}回です。10秒後に続行します。")
+            print(f"{Fore.RED}[-]{Fore.RESET} 振り込み受付完了を確認できませんでした。残り振込試行回数は{config['jibun_attempts'] - i - 1}回です。10秒後に続行します。")
             time.sleep(10)  # 次の振込まで10秒待機
 
     return "done"

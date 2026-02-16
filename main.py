@@ -4,6 +4,7 @@ import undetected_chromedriver as uc
 import selenium.common.exceptions
 from core.jibunbank import jibunbank
 from core.shinsei import shinsei
+from colorama import init, Fore
 
 
 def load_config() -> dict:
@@ -11,7 +12,7 @@ def load_config() -> dict:
         try:
             config_file = yaml.safe_load(f)    
         except FileNotFoundError:
-            raise FileNotFoundError("[-] config.yamlが設置されていません。")
+            raise FileNotFoundError(f"{Fore.RED}[-]{Fore.RESET} config.yamlが設置されていません。")
     try:
         config = {
             "jibun_customer_no": str(config_file["jibun_customer_no"]),
@@ -30,9 +31,9 @@ def load_config() -> dict:
         }
         return config
     except KeyError as e:
-        raise ValueError(f"[-] 構成が正しくありません。キーエラーです: {e}")
+        raise ValueError(f"{Fore.RED}[-]{Fore.RESET} 構成が正しくありません。キーエラーです: {e}")
     except ValueError as e:
-        raise ValueError(f"[-] 構成の値の型が正しくありません。値エラーです: {e}")
+        raise ValueError(f"{Fore.RED}[-]{Fore.RESET} 構成の値の型が正しくありません。値エラーです: {e}")
 
 def open_browser() -> uc.Chrome:
     profile_path = os.path.dirname(__file__) + "/chrome_profile"
@@ -54,74 +55,76 @@ def open_browser() -> uc.Chrome:
             user_data_dir=profile_path
         )
     except selenium.common.exceptions.SessionNotCreatedException:
-        raise RuntimeError("[-] Chromeセッションを初期化できませんでした。Chromeのバージョンとundetected-chromedriverの互換性を確認してください。")
+        raise RuntimeError(f"{Fore.RED}[-]{Fore.RESET} Chromeセッションを初期化できませんでした。Chromeのバージョンとundetected-chromedriverの互換性を確認してください。")
     except Exception as e:
-        raise RuntimeError(f"[-] Chromeの起動中にエラーが発生しました: {e}")
+        raise RuntimeError(f"{Fore.RED}[-]{Fore.RESET} Chromeの起動中にエラーが発生しました: {e}")
 
     return driver
 
 def main_prompt() -> bool:
-    info = """
+    info = f"""
 ==================================================
-    ポイ活自動化ツール by Mutsuki
+                {Fore.CYAN}ポイ活自動化ツール{Fore.RESET}
+                      {Fore.GREEN}by Mutsuki
 
     Github:
     https://github.com/mutsukitan/poikatsu
 
     Twitter(現: X):
-    https://twitter.com/mutsukitan
+    https://twitter.com/mutsukitan{Fore.RESET}
 ==================================================
-
     1: auじぶん銀行連続振込
     2: SBI新生銀行連続振込
     9: このツールについて
-    0: exit
+    0: Exit
+
 """
     print(info)
-    input_ = input("[?] オプションを選択してください: ")
+    input_ = input(f"{Fore.MAGENTA}[?]{Fore.RESET} オプションを選択してください: ")
 
     if input_ == "1":
-        print("[!] auじぶん銀行の連続振込を開始します。振り込み失敗を検知した場合10秒の待機時間があるため、その間に処理をキャンセルできます。")
-        input("[+] Enterを押すと続行します。")
+        print(f"{Fore.YELLOW}[!]{Fore.RESET} auじぶん銀行の連続振込を開始します。振り込み失敗を検知した場合10秒の待機時間があるため、その間に処理をキャンセルできます。")
+        input(f"{Fore.GREEN}[+]{Fore.RESET}Enterを押すと続行します。")
         driver = open_browser()
         result = jibunbank(driver, config)
         if result == "done":
             driver.quit()
-            print("[+] auじぶん銀行連続振込が完了しました。")
+            print(f"{Fore.GREEN}[+]{Fore.RESET} auじぶん銀行連続振込が完了しました。")
         else:
-            print("[-] auじぶん銀行連続振込が完了しませんでした。")
+            print(f"{Fore.RED}[-]{Fore.RESET} auじぶん銀行連続振込が完了しませんでした。")
         return True
 
     elif input_ == "2":
-        print("[!] SBI新生銀行の連続振込を開始します。振り込み失敗を検知した場合10秒の待機時間があるため、その間に処理をキャンセルできます。")
-        input("[+] Enterを押すと続行します。")
+        print(f"{Fore.YELLOW}[!]{Fore.RESET} SBI新生銀行の連続振込を開始します。振り込み失敗を検知した場合10秒の待機時間があるため、その間に処理をキャンセルできます。")
+        input(f"{Fore.GREEN}[+]{Fore.RESET} Enterを押すと続行します。")
         driver = open_browser()
         result = shinsei(driver, config)
         if result == "done":
             driver.quit()
-            print("[+] SBI新生銀行連続振込が完了しました。")
+            print(f"{Fore.GREEN}[+]{Fore.RESET} SBI新生銀行連続振込が完了しました。")
 
         else:
-            print("[-] SBI新生銀行連続振込が完了しませんでした。")
+            print(f"{Fore.RED}[-]{Fore.RESET} SBI新生銀行連続振込が完了しませんでした。")
         return True
 
     elif input_ == "9":
-        about = "このツールはMutsukiによって作成されました。\n" \
+        about = "\n\nこのツールはMutsukiによって作成されました。\n" \
         "トップメニューに記載のGithubリポジトリにて公開されています。\n" \
-        "バグ報告や機能要望などがありましたら、GithubのIssueまでご連絡ください。"
+        "バグ報告や機能要望などがありましたら、GithubのIssueまでご連絡ください。\n\n"
         print(about)
         return True
     
     elif input_ == "0":
-        print("[!] Exiting...")
+        print(f"{Fore.YELLOW}[!]{Fore.RESET} Exiting...")
         return False
     
     else:
-        print("[-] 無効なオプションです。もう一度選択してください。")
+        print(f"{Fore.RED}[-]{Fore.RESET} 無効なオプションです。もう一度選択してください。")
         return True
 
 
 if __name__ == "__main__":
+    init(autoreset=True)
     config = load_config()
 
     while main_prompt():

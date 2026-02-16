@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from colorama import Fore
 
 
 def shinsei(driver: uc.Chrome, config: dict) -> str:
@@ -54,11 +55,11 @@ def shinsei(driver: uc.Chrome, config: dict) -> str:
         try:
             WebDriverWait(driver, 240, 1).until(EC.presence_of_element_located((By.ID, "label_transferComplete")))
         except TimeoutException:
-            print(f"[-] 振り込み受付完了を確認できませんでした。残り振込試行回数は{config['shinsei_attempts'] - i - 1}回です。10秒後に続行します。")
+            print(f"{Fore.RED}[-]{Fore.RESET} 振り込み受付完了を確認できませんでした。残り振込試行回数は{config['shinsei_attempts'] - i - 1}回です。10秒後に続行します。")
             time.sleep(10)  # 次の振込まで10秒待機
             continue
         
-        print(f"[+] 振り込み受付完了を確認しました。残り振込試行回数は{config['shinsei_attempts'] - i - 1}回です。続行します。")
+        print(f"{Fore.GREEN}[+]{Fore.RESET} 振り込み受付完了を確認しました。残り振込試行回数は{config['shinsei_attempts'] - i - 1}回です。続行します。")
         
         driver.find_element(by=By.CLASS_NAME, value="TR0009PrintAndNextBtn").click()
 
